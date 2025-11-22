@@ -1,0 +1,11 @@
+# Environment variables
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# Local test files
+*.mp4
+*.mov
+*.avi
