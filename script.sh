@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Configuration
-API_KEY="${SHORTCUT_API_KEY}"
-BASE_URL="${SHORTCUT_API_URL:-https://web2labs.com}"
+API_KEY="${STUDIO_API_KEY:-$SHORTCUT_API_KEY}"
+BASE_URL="${STUDIO_API_URL:-${SHORTCUT_API_URL:-https://web2labs.com}}"
 VIDEO_FILE="$1"
 
 # Check dependencies
@@ -12,7 +12,7 @@ if ! command -v jq &> /dev/null; then
 fi
 
 if [ -z "$API_KEY" ]; then
-    echo "Error: SHORTCUT_API_KEY environment variable not set."
+    echo "Error: STUDIO_API_KEY environment variable not set."
     exit 1
 fi
 
@@ -27,7 +27,7 @@ if [ ! -f "$VIDEO_FILE" ]; then
 fi
 
 echo "=================================================="
-echo "Shortcut API Shell Example"
+echo "Studio API Shell Example"
 echo "=================================================="
 
 # 1. Upload Video
@@ -68,11 +68,12 @@ while true; do
     # Print status on same line
     printf "\rStatus: %-10s | Stage: %-30s | Progress: %3d%%" "$STATUS" "$STAGE" "$PERCENTAGE"
     
-    if [ "$STATUS" == "Completed" ]; then
+    STATUS_LC=$(echo "$STATUS" | tr '[:upper:]' '[:lower:]')
+    if [ "$STATUS_LC" == "completed" ]; then
         echo ""
         echo "Processing completed successfully!"
         break
-    elif [ "$STATUS" == "Failed" ]; then
+    elif [ "$STATUS_LC" == "failed" ]; then
         echo ""
         echo "Processing failed: $(echo "$STATUS_RESPONSE" | jq -r '.data.error.message')"
         exit 1
@@ -104,6 +105,26 @@ SUBTITLES=$(echo "$RESULTS_RESPONSE" | jq -r '.data.subtitles.url // empty')
 if [ ! -z "$SUBTITLES" ]; then
     echo ""
     echo "Subtitles: $SUBTITLES"
+fi
+
+THUMB_COUNT=$(echo "$RESULTS_RESPONSE" | jq -r '.data.thumbnails | length // 0')
+if [ "$THUMB_COUNT" -gt 0 ]; then
+  echo ""
+  echo "Thumbnails ($THUMB_COUNT):"
+  BASE_NAME=$(basename "$VIDEO_FILE")
+  BASE_NAME="${BASE_NAME%.*}"
+
+  echo "$RESULTS_RESPONSE" | jq -c '.data.thumbnails[] | select(.imageUrl != null) | {variant, imageUrl, imageExt}' | while read -r row; do
+    VARIANT=$(echo "$row" | jq -r '.variant // "A"')
+    URL=$(echo "$row" | jq -r '.imageUrl')
+    EXT=$(echo "$row" | jq -r '.imageExt // "png"')
+    if [[ "$URL" != http* ]]; then
+      URL="$BASE_URL$URL"
+    fi
+    OUT="${BASE_NAME}_thumbnail_${VARIANT}.${EXT}"
+    curl -s -L -H "X-API-Key: $API_KEY" "$URL" -o "$OUT"
+    echo "- $VARIANT: saved to $OUT"
+  done
 fi
 
 echo "=================================================="

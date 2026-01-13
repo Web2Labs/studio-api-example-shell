@@ -1,6 +1,6 @@
-# Shortcut API Shell Example
+# Studio API Shell Example
 
-Welcome to the Shortcut API Shell example! This project demonstrates how to interact with the Shortcut API using standard command-line tools.
+Welcome to the Studio API Shell example! This project demonstrates how to interact with the Studio API using standard command-line tools.
 
 ## 🚀 Features
 
@@ -15,9 +15,8 @@ Welcome to the Shortcut API Shell example! This project demonstrates how to inte
 - **jq**: For parsing JSON responses.
   - macOS: `brew install jq`
   - Ubuntu/Debian: `sudo apt install jq`
-- **API Key**: You need a Web2Labs Shortcut API key.
-  - Go to [Web2Labs Shortcut](https://web2labs.com/shortcut)
-  - Switch to **API Mode** in the dashboard.
+- **API Key**: You need a Web2Labs Studio API key.
+  - Go to `https://web2labs.com/docs-api`
   - Generate your API key.
 
 ## 🛠️ Installation
@@ -31,7 +30,7 @@ Welcome to the Shortcut API Shell example! This project demonstrates how to inte
 
 3.  **Set up your API Key**:
     ```bash
-    export SHORTCUT_API_KEY=sk_live_YOUR_KEY
+    export STUDIO_API_KEY=sk_live_YOUR_KEY
     ```
 
 ## 🏃 Usage
@@ -44,7 +43,7 @@ Run the script with your video file:
 
 ### What happens next?
 
-1.  **Upload**: `curl` uploads your video to the Shortcut secure worker cloud.
+1.  **Upload**: `curl` uploads your video to the Studio secure processing cloud.
 2.  **Processing**: The script loops, polling the status endpoint and updating the progress.
     ```
     Status: Editing    | Stage: AI processing...            | Progress:  60%
@@ -53,7 +52,10 @@ Run the script with your video file:
 
 ## 📚 API Documentation
 
-For complete API reference, including all available configuration options (like generating shorts, subtitles, or using premium cuts), visit our [Official API Docs](https://web2labs.com/docs/api).
+For complete API reference (including thumbnails), visit:
+- Scalar UI: `https://web2labs.com/api/v1/reference`
+- Swagger UI: `https://web2labs.com/api/v1/docs`
+- OpenAPI JSON: `https://web2labs.com/api/v1/openapi.json`
 
 ## 🤝 Contributing & Support
 
